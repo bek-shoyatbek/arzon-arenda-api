@@ -8,10 +8,16 @@ export class HomeApiService {
 
     create(data: Prisma.HomeCreateInput) {
         return this.prisma.home.create({
-            data,
-            include: {
-                images: true,
-            }
+            data: {
+                ...data,
+                images: {
+                    create: data.images as Prisma.ImageCreateWithoutHomeInput[] || [],
+                },
+                amenities: {
+                    create: data.amenities as Prisma.AmenityCreateManyInput || [],
+                }
+            },
+
         });
     }
 

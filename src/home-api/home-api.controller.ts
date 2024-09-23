@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import { HomeApiService } from './home-api.service';
-import { CreateHomeDto } from './dto/create-home.dto';
 import { HomeDto } from './dto/home.dto';
 
 @ApiTags('homes')
@@ -13,7 +12,7 @@ export class HomeApiController {
   @Post()
   @ApiOperation({ summary: 'Create a new home' })
   @ApiBody({
-    type: CreateHomeDto, description: 'Home creation data'
+    type: HomeDto, description: 'Home creation data'
   })
   @ApiResponse({ status: 201, description: 'The home has been successfully created.', type: Object })
   create(@Body() createHomeDto: Prisma.HomeCreateInput) {
