@@ -9,6 +9,9 @@ export class HomeApiService {
     create(data: Prisma.HomeCreateInput) {
         return this.prisma.home.create({
             data,
+            include: {
+                images: true,
+            }
         });
     }
 
@@ -26,6 +29,9 @@ export class HomeApiService {
             cursor,
             where,
             orderBy,
+            include: {
+                images: true,
+            }
         });
     }
 
@@ -33,7 +39,7 @@ export class HomeApiService {
         return this.prisma.home.findUnique({
             where,
             include: {
-                rentals: true,
+                images: true,
             },
         });
     }

@@ -49,6 +49,6 @@ export class HomeDto {
     updatedAt: Date;
 
     @ApiProperty({ type: () => RentalDto, isArray: true })
-    rentals: RentalDto[];
+    rentals?: RentalDto[];
 }
 

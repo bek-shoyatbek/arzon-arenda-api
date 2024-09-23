@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Rental {
+  id          Int      @id @default(autoincrement())
+  type        String
+  title       String
+  description String
+  price       String
+  phoneNumber String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  home   Home @relation(fields: [homeId], references: [id])
+  homeId Int
+}
+
+model Home {
+  id                Int       @id @default(autoincrement())
+  type              String
+  rooms             Int
+  square            Float
+  floor             Int
+  totalFloors       Int
+  region            String
+  district          String
+  address           String
+  situation         String
+  locationAddress   String
+  locationLatitude  Float
+  locationLongitude Float
+  amenities         Amenity[]
+  images            Image[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  rentals Rental[]
+}
+
+model Amenity {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  Home   Home?  @relation(fields: [homeId], references: [id])
+  homeId Int?
+}
+
+model Image {
+  id       Int    @id @default(autoincrement())
+  uri      String
+  rentalId Int
+  Home     Home?  @relation(fields: [homeId], references: [id])
+  homeId   Int?
+}

@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { RentalDto } from "src/rental-api/dto/rental.dto";
 import { HomeDto } from "./home.dto";
+import { ImageDto } from "src/common/dto/image.dto";
+import { AmenityDto } from "src/common/dto/amenity.dto";
 
 // Home DTO
 export class CreateHomeDto extends HomeDto {
@@ -44,12 +46,18 @@ export class CreateHomeDto extends HomeDto {
     locationLongitude: number;
 
     @ApiProperty()
+    images?: ImageDto[];
+
+    @ApiProperty()
+    amenities?: AmenityDto[];
+
+    @ApiProperty()
     createdAt: Date;
 
     @ApiProperty()
     updatedAt: Date;
 
     @ApiProperty({ type: () => RentalDto, isArray: true })
-    rentals: RentalDto[];
+    rentals?: RentalDto[];
 }
 
