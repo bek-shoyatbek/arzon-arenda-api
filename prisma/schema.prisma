@@ -3,26 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-model Rental {
-  id          Int      @id @default(autoincrement())
-  type        String
-  title       String
-  description String
-  price       String
-  phoneNumber String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  home   Home @relation(fields: [homeId], references: [id])
-  homeId Int
-}
-
 model Home {
-  id                Int       @id @default(autoincrement())
+  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  description       String?
+  condition         String
   type              String
   rooms             Int
   square            Float
@@ -32,28 +21,21 @@ model Home {
   district          String
   address           String
   situation         String
-  locationAddress   String
+  locationAddress   String?
   locationLatitude  Float
   locationLongitude Float
-  amenities         Amenity[]
-  images            Image[]
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  amenities         String?
+  price             Float
+  phoneNumber       String
+  status            HomeStatus @default(pending)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 
-  rentals Rental[]
+  images String[]
 }
 
-model Amenity {
-  id     Int    @id @default(autoincrement())
-  name   String @unique
-  Home   Home?  @relation(fields: [homeId], references: [id])
-  homeId Int?
-}
-
-model Image {
-  id       Int    @id @default(autoincrement())
-  uri      String
-  rentalId Int
-  Home     Home?  @relation(fields: [homeId], references: [id])
-  homeId   Int?
+enum HomeStatus {
+  pending
+  active
+  rejected
 }

@@ -6,47 +6,39 @@ import { Prisma } from '@prisma/client';
 export class HomeApiService {
     constructor(private prisma: PrismaService) { }
 
-    create(data: Prisma.HomeCreateInput) {
+    async create(data: Prisma.HomeCreateInput) {
         return this.prisma.home.create({
             data: {
                 ...data,
-                images: {
-                    create: data.images as Prisma.ImageCreateWithoutHomeInput[] || [],
-                },
-                amenities: {
-                    create: data.amenities as Prisma.AmenityCreateManyInput || [],
-                }
+                rooms: Number(data.rooms),
+                square: Number(data.square),
+                floor: Number(data.floor),
+                price: Number(data.price),
+                totalFloors: Number(data.totalFloors),
+                locationLatitude: Number(data.locationLatitude),
+                locationLongitude: Number(data.locationLongitude),
             },
-
         });
     }
 
     findAll(params: {
         skip?: number;
         take?: number;
-        cursor?: Prisma.HomeWhereUniqueInput;
         where?: Prisma.HomeWhereInput;
         orderBy?: Prisma.HomeOrderByWithRelationInput;
     }) {
-        const { skip, take, cursor, where, orderBy } = params;
+        const { skip, take, where, orderBy } = params;
         return this.prisma.home.findMany({
             skip,
             take,
-            cursor,
             where,
             orderBy,
-            include: {
-                images: true,
-            }
         });
     }
 
     findOne(where: Prisma.HomeWhereUniqueInput) {
         return this.prisma.home.findUnique({
             where,
-            include: {
-                images: true,
-            },
         });
     }
 

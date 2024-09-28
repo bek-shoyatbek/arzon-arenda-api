@@ -1,27 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { HomeApiService } from './home-api.service';
-import { HomeDto } from './dto/home.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
-@ApiTags('homes')
 @Controller('home')
 export class HomeApiController {
   constructor(private readonly homeService: HomeApiService) { }
 
+  @UseInterceptors(FilesInterceptor("images", 5, {
+    storage:
+      diskStorage({
+        destination: "./uploads",
+        filename: (req, file, cb) => {
+          const filename: string = `${Date.now()}-${file.originalname}`;
+          cb(null, filename);
+        }
+      })
+  }))
   @Post()
-  @ApiOperation({ summary: 'Create a new home' })
-  @ApiBody({
-    type: HomeDto, description: 'Home creation data'
-  })
-  @ApiResponse({ status: 201, description: 'The home has been successfully created.', type: Object })
-  create(@Body() createHomeDto: Prisma.HomeCreateInput) {
+  create(@Body() createHomeDto: Omit<Prisma.HomeCreateInput, "status">, @UploadedFiles() images: Express.Multer.File[]) {
+    createHomeDto.images = images.map((image) => image.originalname);
     return this.homeService.create(createHomeDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all homes' })
-  @ApiResponse({ status: 200, description: 'Return all homes.', type: [HomeDto] })
   findAll(@Query() query: {
     skip?: number;
     take?: number;
@@ -33,30 +36,20 @@ export class HomeApiController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a home by id' })
-  @ApiParam({ name: 'id', type: 'number' })
-  @ApiResponse({ status: 200, description: 'Return the home.', type: HomeDto })
   findOne(@Param('id') id: string) {
-    return this.homeService.findOne({ id: Number(id) });
+    return this.homeService.findOne({ id });
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a home' })
-  @ApiParam({ name: 'id', type: 'number' })
-  @ApiBody({ type: HomeDto, description: 'Home update data' })
-  @ApiResponse({ status: 200, description: 'The home has been successfully updated.', type: HomeDto })
-  update(@Param('id') id: string, @Body() updateHomeDto: Prisma.HomeUpdateInput) {
+  update(@Param('id') id: string, @Body() updateHomeDto: Omit<Prisma.HomeUpdateInput, "images">) {
     return this.homeService.update({
-      where: { id: Number(id) },
+      where: { id },
       data: updateHomeDto,
     });
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a home' })
-  @ApiParam({ name: 'id', type: 'number' })
-  @ApiResponse({ status: 200, description: 'The home has been successfully deleted.', type: HomeDto })
   remove(@Param('id') id: string) {
-    return this.homeService.remove({ id: Number(id) });
+    return this.homeService.remove({ id });
   }
 }
