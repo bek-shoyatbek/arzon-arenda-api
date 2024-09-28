@@ -6,7 +6,7 @@ import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [MulterModule.register({
-    dest: './uploads',
+    dest: process.cwd() + 'public',
   })],
   controllers: [HomeApiController],
   providers: [HomeApiService, PrismaService],

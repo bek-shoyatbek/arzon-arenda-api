@@ -24,15 +24,11 @@ export class HomeApiService {
     findAll(params: {
         skip?: number;
         take?: number;
-        where?: Prisma.HomeWhereInput;
-        orderBy?: Prisma.HomeOrderByWithRelationInput;
     }) {
-        const { skip, take, where, orderBy } = params;
+        const { skip, take } = params;
         return this.prisma.home.findMany({
-            skip,
-            take,
-            where,
-            orderBy,
+            skip: +skip || 0,
+            take: +take || 1000,
         });
     }
 

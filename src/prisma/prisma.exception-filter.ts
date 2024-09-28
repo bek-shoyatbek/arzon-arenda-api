@@ -9,6 +9,8 @@ export class PrismaClientExceptionFilter implements ExceptionFilter {
         const response = ctx.getResponse<Response>();
         const message = exception.message.replace(/\n/g, '');
 
+        console.log("error: ", message);
+
         switch (exception.code) {
             case 'P2002':
                 response
